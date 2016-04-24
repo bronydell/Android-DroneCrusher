@@ -4,13 +4,13 @@
     <string name="Settings">Settings</string>
     <string name="Weather">Weather</string>
     <string name="title_edittext_title">Maximum wind speed:</string>
-    <string name="summary_edittext_preference">10 m/s(without m/s)</string>
+    <string name="summary_edittext_preference">10 km/h(without km/h)</string>
     <string name="title_first_section">Drone settings</string>
     <string name="title_activity_settings">Settings</string>
 
     <string name="accept">Ok, you can flight</string>
-    <string name="risky">There is some problems, fly if really want this</string>
-    <string name="danger">There is a lot of problems! We really not recommend you to fly</string>
+    <string name="risky">Conditions are not perfect</string>
+    <string name="danger">Conditions are horrible</string>
 
     <string name="title_military">Show military restricted areas</string>
     <string name="title_park">Show national park restricted areas</string>

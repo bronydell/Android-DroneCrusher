@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.snackbarPosition);
-        status = (TextView)findViewById(R.id.textView);
+        status = (TextView) findViewById(R.id.textView);
         bar = this.getSupportActionBar();
         default_pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         toast = new Toast(getApplicationContext());
@@ -246,11 +246,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getFilters();
         //zoomLevel=Float.parseFloat(default_pref.getString("max_distance", "12"))*10;
         if (mMap != null)
-            if(mMap.isMyLocationEnabled())
+            if (mMap.isMyLocationEnabled())
                 if (mMap.getMyLocation() != null) {
-                new ParseData().execute(getURL(mMap.getMyLocation()), getWeaterURL(mMap.getMyLocation()));
+                    new ParseData().execute(getURL(mMap.getMyLocation()), getWeaterURL(mMap.getMyLocation()));
 
-            }
+                }
     }
 
     @Override
@@ -265,8 +265,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.settings: openSettings(); break;
-            case R.id.weather: toast.cancel(); toast.makeText(getApplicationContext(), lastWeather.getTemp() + "°C. Wind: " + lastWeather.getWind_speed() + "km/h. Direction: " + lastWeather.getWind_dir(), Toast.LENGTH_LONG).show(); break;
+            case R.id.create_new:
+                openSettings();
+                break;
+            case R.id.weather:
+                if (lastWeather != null) {
+                    toast.cancel();
+                    toast.makeText(getApplicationContext(), lastWeather.getTemp() + "°C. Wind: " + lastWeather.getWind_speed() + "km/h. Direction: " + lastWeather.getWind_dir(), Toast.LENGTH_LONG).show();
+                }
+                break;
         }
         return true;
     }
@@ -278,15 +285,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void goToMyLatLng(Location latLng) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latLng.getLatitude(), latLng.getLongitude()), zoomLevel));
+        updatePosition(latLng);
     }
 
-    private Drawable scaleImage (Drawable image, float scaleFactor) {
+    private Drawable scaleImage(Drawable image, float scaleFactor) {
 
         if ((image == null) || !(image instanceof BitmapDrawable)) {
             return image;
         }
 
-        Bitmap b = ((BitmapDrawable)image).getBitmap();
+        Bitmap b = ((BitmapDrawable) image).getBitmap();
 
         int sizeX = Math.round(image.getIntrinsicWidth() * scaleFactor);
         int sizeY = Math.round(image.getIntrinsicHeight() * scaleFactor);
@@ -356,9 +364,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Good for toggling visibility of a progress indicator
             snackbar = Snackbar
                     .make(coordinatorLayout, "Loading restricted areas...", Snackbar.LENGTH_INDEFINITE);
-            flight_status = 3;
+            flight_status = 2;
             snackbar.show();
-            mMap.clear();
         }
 
         @Override
@@ -377,20 +384,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         protected void onPostExecute(Void result) {
+
+            mMap.clear();
             drawRestrict();
             getWeather();
-            if(flight_status<=0)
-            {
+            Log.d("Debug", flight_status + " status");
+            if (flight_status <= 0) {
                 status.setText(getResources().getText(R.string.danger));
                 status.setTextColor(getResources().getColor(R.color.danger));
-            }
-            else if(flight_status==1)
-            {
+            } else if (flight_status == 1) {
                 status.setText(getResources().getText(R.string.risky));
                 status.setTextColor(getResources().getColor(R.color.risk));
-            }
-            else
-            {
+            } else {
                 status.setText(getResources().getText(R.string.accept));
                 status.setTextColor(getResources().getColor(R.color.agree));
             }
@@ -421,13 +426,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 JSONObject edge = polygon.getJSONObject(j);
                                 polyOptions.add(new LatLng(edge.getDouble("longitude"), edge.getDouble("latitude")));
                             }
-                                polyOptions
-                                        .strokeColor(Color.argb(200, 170, 57, 57))
-                                        .fillColor(Color.argb(100, 214, 53, 53));
+                            polyOptions
+                                    .strokeColor(Color.argb(200, 170, 57, 57))
+                                    .fillColor(Color.argb(100, 214, 53, 53));
                             mMap.addPolygon(polyOptions);
                         }
                     }
-                    if(!obj.getBoolean("flight_status"))
+                    if (!obj.getBoolean("flight_status"))
                         flight_status--;
                     if (snackbar != null)
                         if (snackbar.isShown()) {
@@ -452,38 +457,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (weatherResponse != null) {
                     Weather cur = new Weather();
                     obj = new JSONObject(weatherResponse);
-                    Log.d("Debug", obj.toString());
-                    cur.setStatus(obj.getString("weather"));
-                    cur.setCanFly(obj.getBoolean("flight_status"));
-                    cur.setTemp(BigDecimal.valueOf(obj.getDouble("temp_c")).floatValue());
-                    cur.setWind_dir(obj.getString("wind_dir"));
-                    cur.setWind_speed(BigDecimal.valueOf(obj.getDouble("wind_kph")).floatValue());
-                    lastWeather = cur;
-                    if (!cur.isCanFly())
-                        flight_status--;
-                    Picasso.with(getApplicationContext())
-                            .load(obj.getString("icon_url"))
-                            .into(new Target()
-                            {
-                                @Override
-                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from)
-                                {
-                                    Drawable d = new BitmapDrawable(getResources(), bitmap);
-                                    menu.getItem(1).setIcon(scaleImage(d, 2));
-                                }
+                    if (obj.getBoolean("is_legal")) {
+                        Log.d("Debug", obj.toString());
+                        cur.setStatus(obj.getString("weather"));
+                        cur.setCanFly(obj.getBoolean("flight_status"));
+                        cur.setTemp(BigDecimal.valueOf(obj.getDouble("temp_c")).floatValue());
+                        cur.setWind_dir(obj.getString("wind_dir"));
+                        cur.setWind_speed(BigDecimal.valueOf(obj.getDouble("wind_kph")).floatValue());
+                        lastWeather = cur;
+                        if (!cur.isCanFly())
+                            flight_status--;
+                        Picasso.with(getApplicationContext())
+                                .load(obj.getString("icon_url"))
+                                .into(new Target() {
+                                    @Override
+                                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                        Drawable d = new BitmapDrawable(getResources(), bitmap);
+                                        menu.getItem(0).setIcon(scaleImage(d, 2));
+                                    }
 
-                                @Override
-                                public void onBitmapFailed(Drawable errorDrawable)
-                                {
-                                }
+                                    @Override
+                                    public void onBitmapFailed(Drawable errorDrawable) {
+                                    }
 
-                                @Override
-                                public void onPrepareLoad(Drawable placeHolderDrawable)
-                                {
-                                }
-                            });
-                }
-                else{
+                                    @Override
+                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                    }
+                                });
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No weather data for this location", Toast.LENGTH_LONG).show();
+                    }
+                } else {
                     Error("Weather timeout error...");
                 }
             } catch (JSONException e) {
@@ -502,10 +506,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     snackbar.dismiss();
                     locate.setTranslationY(0);
                     if (mMap != null)
-                        if(mMap.isMyLocationEnabled())
+                        if (mMap.isMyLocationEnabled())
                             if (mMap.getMyLocation() != null) {
-                            new ParseData().execute(getURL(mMap.getMyLocation()), getWeaterURL(mMap.getMyLocation()));
-                        }
+                                new ParseData().execute(getURL(mMap.getMyLocation()), getWeaterURL(mMap.getMyLocation()));
+                            }
                 }
             });
         }

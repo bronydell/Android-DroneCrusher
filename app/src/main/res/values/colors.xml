@@ -6,6 +6,6 @@
     <color name="colorText">#ffffff</color>
     <color name="text_shadow">#000000</color>
     <color name="agree">#378b2c</color>
-    <color name="risk">#bc4c1f</color>
+    <color name="risk">#d1ce25</color>
     <color name="danger">#b60000</color>
 </resources>
