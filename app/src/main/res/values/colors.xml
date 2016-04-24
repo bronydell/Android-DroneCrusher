@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1565C0</color>
+    <color name="colorPrimaryDark">#0D47A1</color>
+    <color name="colorAccent">#2196F3   </color>
+    <color name="colorText">#ffffff</color>
+    <color name="text_shadow">#000000</color>
+    <color name="agree">#378b2c</color>
+    <color name="risk">#bc4c1f</color>
+    <color name="danger">#b60000</color>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:compat="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/weather"
+        android:title=""
+        compat:showAsAction="always"/>
+    <item android:id="@+id/create_new"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/Settings"
+        compat:showAsAction="always"/>
+</menu>

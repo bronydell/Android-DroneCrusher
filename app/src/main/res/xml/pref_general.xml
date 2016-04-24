@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <EditTextPreference
+        android:key="max_wind"
+        android:title="@string/pref_title_display_name"
+        android:defaultValue="@string/pref_default_display_name"
+        android:selectAllOnFocus="true"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        android:maxLines="1" />
+    <EditTextPreference
+        android:key="max_distance"
+        android:title="@string/pref_title_display_name_draw"
+        android:defaultValue="@string/pref_default_display_name_draw"
+        android:selectAllOnFocus="true"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        android:maxLines="1" />
+    <CheckBoxPreference
+        android:key="show_military"
+        android:title="@string/title_military"
+        android:defaultValue="true"
+        />
+    <CheckBoxPreference
+        android:key="show_park"
+        android:title="@string/title_park"
+        android:defaultValue="true"
+        />
+    <CheckBoxPreference
+        android:key="show_airports"
+        android:title="@string/title_airports"
+        android:defaultValue="true"
+        />
+
+</PreferenceScreen>
